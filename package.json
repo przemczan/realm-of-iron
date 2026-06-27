@@ -1,0 +1,14 @@
+{
+  "name": "realms-of-iron",
+  "version": "1.0.0",
+  "description": "A browser real-time-strategy prototype — modular ES-module architecture.",
+  "type": "module",
+  "scripts": {
+    "dev": "esbuild --servedir=. --serve=8000",
+    "build": "esbuild src/main.js --bundle --minify --format=iife --outfile=dist/realms-of-iron.bundle.js",
+    "build:standalone": "node scripts/build-standalone.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.1"
+  }
+}

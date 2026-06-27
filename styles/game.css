@@ -1,0 +1,375 @@
+/* =====================================================================
+   game.css — visual identity for Realms of Iron.
+
+   Parchment + ink + gold, Palatino display type, double-ruled borders.
+   Organized as: tokens · shell · top bar · play area · bottom panel ·
+   overlays (title / pause / game-over). The title screen extends the
+   same medieval language rather than introducing a new one.
+   ===================================================================== */
+
+/* ---- Design tokens ---- */
+:root {
+  --parchment: #e8d9b0;
+  --parchment-dark: #c9b682;
+  --ink: #2a1f12;
+  --ink-soft: #5a4731;
+  --gold: #d4a017;
+  --wood: #6b4423;
+  --player: #2e5cb8;
+  --player-light: #5d8be0;
+  --enemy: #b8392e;
+  --enemy-light: #e06b5d;
+  --grass-2: #3d6b30;
+  --grass-3: #355d29;
+}
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; padding: 0;
+  height: 100%;
+  background: #1a1208;
+  font-family: Georgia, 'Times New Roman', serif;
+  color: var(--ink);
+  overflow: hidden;
+  user-select: none;
+}
+
+/* ---- App shell ---- */
+#game-root {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: radial-gradient(ellipse at center, #2a1f12 0%, #0d0805 100%);
+}
+
+/* ---- Top resource bar ---- */
+#top-bar {
+  height: 44px;
+  background: linear-gradient(180deg, var(--parchment) 0%, var(--parchment-dark) 100%);
+  border-bottom: 3px double var(--ink);
+  display: flex;
+  align-items: center;
+  padding: 0 18px;
+  gap: 28px;
+  font-family: 'Palatino', 'Book Antiqua', serif;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+  flex-shrink: 0;
+}
+.resource {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--ink);
+}
+.resource .icon {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  display: inline-block;
+  border: 2px solid var(--ink);
+}
+.icon.gold { background: radial-gradient(circle at 35% 30%, #ffd75a, var(--gold)); }
+.icon.wood { background: var(--wood); border-radius: 3px; position: relative; }
+.icon.wood::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  background: repeating-linear-gradient(90deg, transparent 0 2px, rgba(0,0,0,0.2) 2px 3px);
+}
+.icon.supply { background: var(--ink-soft); border-radius: 3px; }
+#title {
+  margin-left: auto;
+  font-family: 'Palatino', serif;
+  font-style: italic;
+  font-size: 17px;
+  color: var(--ink-soft);
+  letter-spacing: 2px;
+}
+#status-msg { color: var(--enemy); font-weight: bold; margin-right: 16px; }
+
+/* ---- Play area ---- */
+#play-area { flex: 1; position: relative; overflow: hidden; }
+#game-canvas { display: block; cursor: crosshair; background: var(--grass-2); }
+
+/* ---- Bottom command panel ---- */
+#bottom-panel {
+  height: 160px;
+  background: linear-gradient(180deg, var(--parchment-dark) 0%, var(--parchment) 60%, var(--parchment-dark) 100%);
+  border-top: 3px double var(--ink);
+  display: flex;
+  box-shadow: 0 -2px 6px rgba(0,0,0,0.5);
+  flex-shrink: 0;
+}
+#minimap-wrap {
+  width: 160px;
+  height: 100%;
+  padding: 8px;
+  border-right: 2px solid var(--ink-soft);
+  display: flex;
+  flex-direction: column;
+}
+#minimap {
+  width: 100%;
+  flex: 1;
+  border: 2px solid var(--ink);
+  background: var(--grass-3);
+  cursor: pointer;
+  image-rendering: pixelated;
+}
+#selection-panel { flex: 1; padding: 10px 14px; border-right: 2px solid var(--ink-soft); overflow: hidden; }
+.panel-title {
+  font-family: 'Palatino', serif;
+  font-size: 14px;
+  font-style: italic;
+  color: var(--ink-soft);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  border-bottom: 1px solid var(--ink-soft);
+  padding-bottom: 3px;
+}
+.sel-info { font-size: 14px; line-height: 1.5; }
+.sel-info .big { font-size: 18px; font-weight: bold; font-family: 'Palatino', serif; }
+.sel-hp-bar {
+  width: 200px; height: 8px;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--ink);
+  margin: 4px 0;
+  overflow: hidden;
+}
+.sel-hp-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4a8c3a, #6abc4a);
+  transition: width 0.2s;
+}
+#command-panel { width: 340px; padding: 10px 14px; }
+.cmd-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 4px; }
+
+/* ---- Shared "carved button" styling ---- */
+.cmd-btn {
+  background: linear-gradient(180deg, #f0e0b8 0%, #c9b682 100%);
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  padding: 6px 4px;
+  cursor: pointer;
+  font-family: 'Palatino', serif;
+  font-size: 11px;
+  color: var(--ink);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.4), 0 1px 2px rgba(0,0,0,0.3);
+  transition: transform 0.05s;
+  text-align: center;
+  line-height: 1.2;
+}
+.cmd-btn:hover:not(:disabled) { background: linear-gradient(180deg, #fff0c8 0%, #e0c690 100%); }
+.cmd-btn:active:not(:disabled) { transform: translateY(1px); box-shadow: inset 0 1px 3px rgba(0,0,0,0.3); }
+.cmd-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.cmd-btn .cost { display: block; font-size: 9px; color: var(--ink-soft); margin-top: 2px; }
+.cmd-btn.building-mode { box-shadow: inset 0 0 0 2px var(--gold), 0 0 8px var(--gold); }
+
+/* ---- Help + hints ---- */
+#help {
+  position: absolute;
+  top: 8px; right: 8px;
+  background: rgba(232, 217, 176, 0.92);
+  border: 2px solid var(--ink);
+  padding: 8px 12px;
+  font-size: 12px;
+  color: var(--ink);
+  border-radius: 4px;
+  max-width: 260px;
+  line-height: 1.5;
+}
+#help b { font-family: 'Palatino', serif; }
+#help-toggle {
+  position: absolute;
+  top: 8px; left: 8px;
+  background: rgba(232, 217, 176, 0.92);
+  border: 2px solid var(--ink);
+  padding: 4px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  font-family: 'Palatino', serif;
+}
+.build-hint {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(232, 217, 176, 0.95);
+  border: 2px solid var(--ink);
+  padding: 6px 14px;
+  font-family: 'Palatino', serif;
+  font-size: 14px;
+  color: var(--ink);
+  border-radius: 4px;
+  pointer-events: none;
+  display: none;
+}
+.build-hint.show { display: block; }
+
+/* ---- Top-bar menu button ---- */
+#menu-btn {
+  background: linear-gradient(180deg, #f0e0b8 0%, #c9b682 100%);
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  padding: 4px 12px;
+  font-family: 'Palatino', serif;
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--ink);
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.4), 0 1px 2px rgba(0,0,0,0.3);
+  letter-spacing: 1px;
+}
+#menu-btn:hover { background: linear-gradient(180deg, #fff0c8 0%, #e0c690 100%); }
+#menu-btn:active { transform: translateY(1px); }
+
+/* ---- Game-over overlay (covers the play area) ---- */
+#overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 5, 0, 0.85);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  flex-direction: column;
+  gap: 18px;
+}
+#overlay.show { display: flex; }
+#overlay .title {
+  font-family: 'Palatino', serif;
+  font-size: 56px;
+  color: var(--parchment);
+  letter-spacing: 8px;
+  text-shadow: 0 4px 12px #000;
+}
+#overlay .subtitle {
+  font-family: 'Palatino', serif;
+  font-style: italic;
+  color: var(--parchment-dark);
+  font-size: 20px;
+}
+#overlay .overlay-actions { display: flex; gap: 14px; margin-top: 6px; }
+#overlay button {
+  background: linear-gradient(180deg, #f0e0b8, #c9b682);
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 12px 32px;
+  font-family: 'Palatino', serif;
+  font-size: 18px;
+  cursor: pointer;
+  color: var(--ink);
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+#overlay button:hover { background: linear-gradient(180deg, #fff0c8, #e0c690); }
+#overlay button.secondary {
+  font-size: 15px;
+  padding: 10px 24px;
+  background: linear-gradient(180deg, #e0d0a8, #bca676);
+}
+
+/* ---- Pause menu (covers the play area) ---- */
+#menu-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, rgba(20,12,4,0.78) 0%, rgba(8,4,0,0.94) 100%);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 120;
+}
+#menu-overlay.show { display: flex; }
+#menu-panel, #main-panel {
+  background: linear-gradient(180deg, var(--parchment) 0%, var(--parchment-dark) 100%);
+  border: 3px double var(--ink);
+  border-radius: 8px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.4);
+  padding: 32px 44px 36px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  min-width: 300px;
+}
+#menu-panel .menu-title, #main-panel .menu-title {
+  font-family: 'Palatino', serif;
+  font-size: 34px;
+  font-style: italic;
+  color: var(--ink);
+  letter-spacing: 4px;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.4);
+  margin-bottom: 2px;
+}
+#menu-panel .menu-sub, #main-panel .menu-sub {
+  font-family: 'Palatino', serif;
+  font-size: 13px;
+  color: var(--ink-soft);
+  font-style: italic;
+  margin-bottom: 10px;
+  letter-spacing: 1px;
+}
+.menu-rule {
+  width: 80%;
+  border: none;
+  border-top: 1px solid var(--ink-soft);
+  margin: 0 0 6px;
+}
+.menu-action {
+  width: 100%;
+  background: linear-gradient(180deg, #f0e0b8, #c9b682);
+  border: 2px solid var(--ink);
+  border-radius: 6px;
+  padding: 12px 28px;
+  font-family: 'Palatino', serif;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  color: var(--ink);
+  letter-spacing: 2px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.4), 0 2px 3px rgba(0,0,0,0.3);
+  transition: transform 0.05s;
+}
+.menu-action:hover { background: linear-gradient(180deg, #fff0c8, #e0c690); }
+.menu-action:active { transform: translateY(1px); }
+.menu-action.secondary {
+  font-size: 15px;
+  padding: 9px 24px;
+  background: linear-gradient(180deg, #e0d0a8, #bca676);
+}
+
+/* ---- Title screen (covers the whole window) ---- */
+#main-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(ellipse at center, rgba(36,24,10,0.55) 0%, rgba(8,4,0,0.92) 100%),
+    repeating-linear-gradient(45deg, #1a1208 0 22px, #20160b 22px 44px);
+}
+#main-screen.show { display: flex; }
+#main-panel { padding: 40px 60px 46px; gap: 18px; min-width: 360px; }
+#main-panel .crest {
+  font-size: 40px;
+  color: var(--gold);
+  text-shadow: 0 2px 6px rgba(0,0,0,0.5);
+  margin-bottom: -6px;
+}
+#main-panel .menu-title { font-size: 42px; letter-spacing: 6px; }
+#main-actions { display: flex; flex-direction: column; gap: 12px; width: 100%; margin-top: 4px; }
+#main-panel .tagline {
+  font-family: 'Palatino', serif;
+  font-style: italic;
+  color: var(--ink-soft);
+  font-size: 13px;
+  max-width: 320px;
+  text-align: center;
+  line-height: 1.5;
+  margin-top: 4px;
+}

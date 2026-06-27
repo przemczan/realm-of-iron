@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Realms of Iron — RTS Prototype</title>
+<link rel="stylesheet" href="styles/game.css">
+</head>
+<body>
+<div id="game-root">
+  <div id="top-bar">
+    <button id="menu-btn">☰ Menu</button>
+    <div class="resource"><span class="icon gold"></span><span id="r-gold">200</span></div>
+    <div class="resource"><span class="icon wood"></span><span id="r-wood">100</span></div>
+    <div class="resource"><span class="icon supply"></span><span id="r-supply">0/10</span></div>
+    <span id="status-msg"></span>
+    <span id="title">⚔ Realms of Iron ⚔</span>
+  </div>
+
+  <div id="play-area">
+    <canvas id="game-canvas"></canvas>
+
+    <div id="help-toggle">? Controls</div>
+    <div id="help" style="display:none;">
+      <b>Controls</b><br>
+      • <b>Left-click</b>: select unit<br>
+      • <b>Drag</b>: box-select<br>
+      • <b>Right-click</b>: move / attack / gather<br>
+      • <b>Right-click own building</b>: repair (peasant)<br>
+      • <b>Shift+click</b>: add to selection<br>
+      • <b>WASD / arrows</b>: pan camera<br>
+      • <b>Middle-click drag</b>: pan camera<br>
+      • <b>Esc</b>: cancel build / open menu<br>
+      <hr style="border:none;border-top:1px solid var(--ink-soft);margin:6px 0;">
+      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+        <input type="checkbox" id="opt-edge-scroll" checked>
+        <span>Edge-of-screen scrolling</span>
+      </label>
+      <br>
+      Defeat the barbarian Town Hall to win.
+    </div>
+
+    <div class="build-hint" id="build-hint">Click on the map to place. Right-click to cancel.</div>
+
+    <!-- Victory / defeat -->
+    <div id="overlay">
+      <div class="title" id="overlay-title">VICTORY</div>
+      <div class="subtitle" id="overlay-subtitle">The realm endures.</div>
+      <div class="overlay-actions">
+        <button id="overlay-again">Play Again</button>
+        <button id="overlay-exit" class="secondary">Main Menu</button>
+      </div>
+    </div>
+
+    <!-- Pause menu -->
+    <div id="menu-overlay">
+      <div id="menu-panel">
+        <div class="menu-title">⚔ Realms of Iron ⚔</div>
+        <div class="menu-sub">The realm holds its breath…</div>
+        <hr class="menu-rule">
+        <button class="menu-action" id="menu-resume">Resume</button>
+        <button class="menu-action secondary" id="menu-restart">Restart Battle</button>
+        <button class="menu-action secondary" id="menu-exit">Exit to Main Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="bottom-panel">
+    <div id="minimap-wrap">
+      <div class="panel-title">Realm</div>
+      <canvas id="minimap"></canvas>
+    </div>
+    <div id="selection-panel">
+      <div class="panel-title">Selection</div>
+      <div class="sel-info" id="sel-info">Nothing selected. Left-click a unit or building.</div>
+    </div>
+    <div id="command-panel">
+      <div class="panel-title">Commands</div>
+      <div class="cmd-grid" id="cmd-grid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Title screen (covers everything until a match begins) -->
+<div id="main-screen">
+  <div id="main-panel">
+    <div class="crest">⚔</div>
+    <div class="menu-title">Realms of Iron</div>
+    <div class="menu-sub">A Real-Time Strategy Prototype</div>
+    <hr class="menu-rule">
+    <div id="main-actions">
+      <button class="menu-action" id="start-btn">Start New Game</button>
+    </div>
+    <div class="tagline">
+      Raise peasants, mine gold, fell timber, and march your knights
+      on the barbarian keep. Destroy their Town Hall to claim the realm.
+    </div>
+  </div>
+</div>
+
+<script type="module" src="src/main.js"></script>
+</body>
+</html>
